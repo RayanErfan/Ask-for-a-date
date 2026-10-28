@@ -1,0 +1,36 @@
+[Unit]
+Description=Ask-for-a-date (Next.js production)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+DynamicUser=yes
+WorkingDirectory=/srv/ask-for-a-date/current
+ExecStart=/usr/bin/node /srv/ask-for-a-date/current/server.js
+Environment=NODE_ENV=production
+Environment=HOSTNAME=127.0.0.1
+Environment=PORT=3217
+Environment=APP_ORIGIN=https://ask-for-a-date.lorqina.ir
+EnvironmentFile=/etc/ask-for-a-date.env
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+KillSignal=SIGTERM
+UMask=0077
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+LockPersonality=yes
+TasksMax=128
+MemoryMax=768M
+
+[Install]
+WantedBy=multi-user.target
