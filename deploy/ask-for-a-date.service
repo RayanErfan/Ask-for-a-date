@@ -11,7 +11,7 @@ ExecStart=/usr/bin/node /srv/ask-for-a-date/current/server.js
 Environment=NODE_ENV=production
 Environment=HOSTNAME=127.0.0.1
 Environment=PORT=3217
-Environment=APP_ORIGIN=https://ask-for-a-date.lorqina.ir
+Environment=APP_ORIGIN=https://ask-for-a-date.lorqina.ir,https://parmida.lorqina.ir
 EnvironmentFile=/etc/ask-for-a-date.env
 Restart=on-failure
 RestartSec=5

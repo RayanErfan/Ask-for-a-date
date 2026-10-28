@@ -34,8 +34,10 @@ export async function POST(request: Request) {
   // Host is the browser's destination; arbitrary forwarding headers are not trusted.
   const protocol = process.env.VERCEL ? "https:" : new URL(request.url).protocol;
   // Self-hosting behind TLS termination pins the public origin explicitly.
-  const expectedOrigin = process.env.APP_ORIGIN || `${protocol}//${request.headers.get("host")}`;
-  if (request.headers.get("origin") !== expectedOrigin) return failure(403);
+  // A comma-separated list keeps the old host working while a rename moves.
+  const expected = (process.env.APP_ORIGIN || `${protocol}//${request.headers.get("host")}`)
+    .split(",").map(origin => origin.trim()).filter(Boolean);
+  if (!expected.includes(request.headers.get("origin") || "")) return failure(403);
   if (request.headers.get("sec-fetch-site") === "cross-site") return failure(403);
   if (request.headers.get("content-type")?.split(";")[0].trim() !== "application/json") return failure(415);
   if (!limit(`post:${callerKey(request)}`, 24)) return failure(429);

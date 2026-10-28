@@ -49,7 +49,9 @@ Only `visit` and `final` events are accepted. Reports use plain Telegram text wi
 
 The production site is served at **https://ask-for-a-date.lorqina.ir**. Nginx terminates TLS and proxies to a standalone Next.js service listening only on `127.0.0.1:3217`. HTTP redirects to HTTPS. The app runs as an isolated, unprivileged systemd user, starts at boot, and restarts on failure. Releases live under `/srv/ask-for-a-date/releases/`; `/srv/ask-for-a-date/current` points to the active release. Configuration templates are in `deploy/`.
 
-Server credentials belong in `/etc/ask-for-a-date.env` (root-owned, mode `600`), outside the repository and release. Set the replacement `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`, then run `sudo systemctl restart ask-for-a-date`. The server pins `APP_ORIGIN=https://ask-for-a-date.lorqina.ir` so same-origin reporting works correctly behind HTTPS termination. Credentials were left empty at initial deployment.
+Server credentials belong in `/etc/ask-for-a-date.env` (root-owned, mode `600`), outside the repository and release. Set the replacement `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`, then run `sudo systemctl restart ask-for-a-date`. The server pins `APP_ORIGIN` so same-origin reporting works correctly behind HTTPS termination; it takes a comma-separated list, which keeps the previous host answering while a rename moves. Credentials were left empty at initial deployment.
+
+The previous host `parmida.lorqina.ir` still answers from the same service. To finish the move, point the `ask-for-a-date` DNS record at the server, issue its certificate, then drop the old name from `server_name` and `APP_ORIGIN`.
 
 Inspect service health with `systemctl status ask-for-a-date` and logs with `journalctl -u ask-for-a-date`. Nginx applies a 30-request/minute per-IP limit to `/api/report`, with a burst allowance of 10. Access logging is disabled for this domain. Let's Encrypt renews through the existing Certbot timer; a scoped renewal hook reloads Nginx for this certificate.
 
